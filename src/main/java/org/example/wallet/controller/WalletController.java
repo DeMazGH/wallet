@@ -26,6 +26,8 @@ public class WalletController {
 
         try {
             service.performOperation(reqData);
+            return ResponseEntity.ok()
+                                 .build();
         } catch (WalletDoesNotExistException e) {
             return ResponseEntity.notFound()
                                  .build();
@@ -36,14 +38,20 @@ public class WalletController {
             return ResponseEntity.internalServerError()
                                  .build();
         }
-        return ResponseEntity.ok()
-                             .build();
     }
 
     @GetMapping("/wallets/{WALLET_UUID}")
-    public ResponseEntity<?> getBalance(@PathVariable (name = "WALLET_UUID") UUID walletId) {
-        BigDecimal amount = service.getBalance(walletId);
+    public ResponseEntity<?> getBalance(@PathVariable(name = "WALLET_UUID") UUID walletId) {
+        BigDecimal amount;
 
-        return ResponseEntity.ok(amount);
+        try {
+            amount = service.getBalance(walletId);
+
+            return ResponseEntity.ok(amount);
+
+        } catch (WalletDoesNotExistException e) {
+            return ResponseEntity.notFound()
+                                 .build();
+        }
     }
 }

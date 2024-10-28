@@ -34,6 +34,7 @@ public class WalletServiceImpl implements WalletService {
         if (OperationType.DEPOSIT.equals(reqData.operationType())) {
             wallet.setAmount(wallet.getAmount()
                                    .add(reqData.amount()));
+            repository.save(wallet);
         } else if (OperationType.WITHDRAW.equals(reqData.operationType())) {
             if (wallet.getAmount()
                       .compareTo(reqData.amount()) < 0) {
@@ -42,6 +43,7 @@ public class WalletServiceImpl implements WalletService {
 
             wallet.setAmount(wallet.getAmount()
                                    .subtract(reqData.amount()));
+            repository.save(wallet);
         } else {
             throw new UnsupportedOperationException();
         }
@@ -49,8 +51,13 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public BigDecimal getBalance(UUID walletId) {
-        return repository.findWalletByWalletId(walletId)
-                         .getAmount();
+        Wallet wallet = repository.findWalletByWalletId(walletId);
+
+        if (wallet != null) {
+            return wallet.getAmount();
+        } else {
+            throw new WalletDoesNotExistException();
+        }
     }
 
 }
