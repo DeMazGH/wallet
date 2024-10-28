@@ -10,6 +10,9 @@ import org.example.wallet.repository.WalletRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
 @Service
 public class WalletServiceImpl implements WalletService {
 
@@ -42,6 +45,12 @@ public class WalletServiceImpl implements WalletService {
         } else {
             throw new UnsupportedOperationException();
         }
+    }
+
+    @Override
+    public BigDecimal getBalance(UUID walletId) {
+        return repository.findWalletByWalletId(walletId)
+                         .getAmount();
     }
 
 }
